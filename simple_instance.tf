@@ -62,6 +62,17 @@ resource "aws_iam_role_policy" "takasing_tf_policy" {
 EOF
 }
 
+resource "aws_security_group" "allow_all" {
+  name = "allow-all"
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  description = "TODO: limit cidr_blocks"
+}
+
 resource "aws_instance" "tf_instance" {
   ami = "ami-9cc1119c"
   availability_zone = "ap-northeast-1a"
@@ -71,4 +82,5 @@ resource "aws_instance" "tf_instance" {
     Name = "terraformers"
   }
   iam_instance_profile = "${aws_iam_instance_profile.takasing_tf.name}"
+  security_groups = ["${aws_security_group.allow_all.name}"]
 }
